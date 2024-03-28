@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { v4 } from "uuid";
 
 const contactsPath = path.join("db", "contacts.json");
 
@@ -16,16 +17,8 @@ async function listContacts() {
 
 async function getContactById(contactId) {
   try {
-    const readJsonResult = await fs.readFile(contactsPath);
-
-    const arrayOfContacts = JSON.parse(readJsonResult);
-
-    const contact = arrayOfContacts.find((contact) => contact.id === contactId);
-    if (contact) {
-      return contact;
-    } else {
-      return null;
-    }
+    const contacts = await listContacts();
+    return contacts.find((contact) => contact.id === contactId) || null;
   } catch (error) {
     console.log(error);
   }
@@ -55,7 +48,7 @@ async function removeContact(contactId) {
 async function addContact(name, email, phone) {
   try {
     const contacts = await listContacts();
-    const newContactId = Date.now().toString();
+    const newContactId = v4();
     const newContact = { id: newContactId, name, email, phone };
     contacts.push(newContact);
     await fs.writeFile(contactsPath, JSON.stringify(contacts));
