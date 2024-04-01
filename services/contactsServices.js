@@ -2,18 +2,6 @@ import { promises as fs } from "fs";
 import path from "path";
 import { v4 } from "uuid";
 
-// ************************
-// import { fileURLToPath } from "url";
-// import { dirname } from "path";
-
-// Отримання шляху до поточного файлу
-// const __filename = fileURLToPath(import.meta.url);
-
-// // Отримання шляху до папки, в якій знаходиться поточний файл
-// const __dirname = dirname(__filename);
-// const contactsPath = path.join(__dirname, "..", "db", "contacts.json");
-// ******************
-
 const contactsPath = path.join("db", "contacts.json");
 
 async function listContacts() {
