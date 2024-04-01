@@ -1,18 +1,20 @@
-// contactsServices.js
-
 import { promises as fs } from "fs";
 import path from "path";
 import { v4 } from "uuid";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
+
+// ************************
+// import { fileURLToPath } from "url";
+// import { dirname } from "path";
 
 // Отримання шляху до поточного файлу
-const __filename = fileURLToPath(import.meta.url);
+// const __filename = fileURLToPath(import.meta.url);
 
-// Отримання шляху до папки, в якій знаходиться поточний файл
-const __dirname = dirname(__filename);
+// // Отримання шляху до папки, в якій знаходиться поточний файл
+// const __dirname = dirname(__filename);
+// const contactsPath = path.join(__dirname, "..", "db", "contacts.json");
+// ******************
 
-const contactsPath = path.join(__dirname, "..", "db", "contacts.json");
+const contactsPath = path.join("db", "contacts.json");
 
 async function listContacts() {
   try {
@@ -46,9 +48,7 @@ async function removeContact(contactId) {
 
       await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
 
-      return contactToRemove;
-    } else {
-      return null;
+      return contactToRemove || null;
     }
   } catch (error) {
     console.log(error.message);
@@ -66,4 +66,26 @@ async function addContact(name, email, phone) {
   } catch (error) {}
 }
 
-export default { listContacts, getContactById, removeContact, addContact };
+async function updateContactbyId(id, data) {
+  try {
+    const contacts = await listContacts();
+    const contactToUpdate = contacts.findIndex((contact) => contact.id === id);
+    if (contactToUpdate === -1) {
+      return null;
+    }
+    contacts[contactToUpdate] = { ...contacts[contactToUpdate], ...data };
+    await fs.writeFile(contactsPath, JSON.stringify(contacts));
+
+    return contacts[contactToUpdate];
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export default {
+  listContacts,
+  getContactById,
+  removeContact,
+  addContact,
+  updateContactbyId,
+};

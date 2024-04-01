@@ -2,13 +2,13 @@ module.exports = {
   env: {
     es6: true,
     node: true,
+    jest: true,
   },
   globals: {},
   parserOptions: {
     ecmaVersion: 2020,
   },
-  extends: ["airbnb-base", "eslint:recommended"],
-  plugins: [],
+  extends: ["airbnb-base", "eslint:recommended", "prettier"],
   rules: {
     "class-methods-use-this": "off",
     "array-bracket-newline": "off",
@@ -29,6 +29,8 @@ module.exports = {
     "global-require": "off",
     "implicit-arrow-linebreak": "off",
     "import/no-extraneous-dependencies": ["error", { devDependencies: true }],
+    "import/prefer-default-export": "off",
+    "import/extensions": ["error", { js: "always" }],
     indent: ["warn", 2, { SwitchCase: 1 }],
     "linebreak-style": "off",
     "max-classes-per-file": "off",
@@ -99,7 +101,15 @@ module.exports = {
     "no-var": "error",
     "no-void": "error",
     "object-shorthand": "error",
-    "object-curly-newline": "warn",
+    "object-curly-newline": [
+      "error",
+      {
+        ObjectExpression: { consistent: true, multiline: true },
+        ObjectPattern: { consistent: true, multiline: true },
+        ImportDeclaration: { consistent: true, multiline: true },
+        ExportDeclaration: { consistent: true, multiline: true },
+      },
+    ],
     "one-var": ["error", "never"],
     "padding-line-between-statements": "error",
     "prefer-const": "error",

@@ -1,9 +1,13 @@
-// contactsController.js
+import HttpError from "../helpers/HttpError.js";
 import contactsServices from "../services/contactsServices.js";
 
-const { listContacts, getContactById, removeContact, addContact } =
-  contactsServices;
-// чи треба додавати до усіх методів next? *********
+const {
+  listContacts,
+  getContactById,
+  removeContact,
+  addContact,
+  updateContactbyId,
+} = contactsServices;
 
 export const getAllContacts = async (req, res) => {
   try {
@@ -18,8 +22,9 @@ export const getAllContacts = async (req, res) => {
   }
 };
 
-export const getOneContact = async (req, res) => {
+export const getOneContact = async (req, res, next) => {
   try {
+    // треба робити checkID ***************
     const { id } = req.params;
     const oneContact = await getContactById(id);
 
@@ -30,14 +35,14 @@ export const getOneContact = async (req, res) => {
         oneContact,
       });
     } else {
-      res.status(404).json({ status: "error", message: "Not found" });
+      throw HttpError(404, "Not found");
     }
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-export const deleteContact = async (req, res) => {
+export const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
     const deletedContact = await removeContact(id);
@@ -45,29 +50,38 @@ export const deleteContact = async (req, res) => {
     if (deletedContact) {
       res.status(200).json({
         status: "success",
-        message: " Contact deleted",
+        message: "Contact deleted",
         deletedContact,
       });
     } else {
-      res.status(404).json({ status: "error", message: "Not found" });
+      throw HttpError(404, "Not found");
     }
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-export const createContact = async (req, res) => {
+export const createContact = async (req, res, next) => {
   try {
     const { name, email, phone } = req.body;
     const newContact = await addContact(name, email, phone);
     if (newContact) {
       res.status(201).json(newContact);
     } else {
-      res.status(400).json({ status: "error", message: error.message });
+      throw HttpError(404, "Not found");
     }
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-export const updateContact = (req, res) => {};
+export const updateContact = async (req, res, next) => {
+  try {
+    // треба робити checkID ***************
+    const { id } = req.params;
+    const contactToUpdate = await updateContactbyId(id, req.body);
+    res.status(200).json(contactToUpdate);
+  } catch (error) {
+    next(error);
+  }
+};
