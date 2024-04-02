@@ -24,7 +24,6 @@ export const getAllContacts = async (req, res) => {
 
 export const getOneContact = async (req, res, next) => {
   try {
-    // треба робити checkID ***************
     const { id } = req.params;
     const oneContact = await getContactById(id);
 
@@ -47,15 +46,14 @@ export const deleteContact = async (req, res, next) => {
     const { id } = req.params;
     const deletedContact = await removeContact(id);
 
-    if (deletedContact) {
-      res.status(200).json({
-        status: "success",
-        message: "Contact deleted",
-        deletedContact,
-      });
-    } else {
+    if (!deletedContact) {
       throw HttpError(404, "Not found");
     }
+    res.status(200).json({
+      status: "success",
+      message: "Contact deleted",
+      deletedContact,
+    });
   } catch (error) {
     next(error);
   }
@@ -65,11 +63,10 @@ export const createContact = async (req, res, next) => {
   try {
     const { name, email, phone } = req.body;
     const newContact = await addContact(name, email, phone);
-    if (newContact) {
-      res.status(201).json(newContact);
-    } else {
+    if (!newContact) {
       throw HttpError(404, "Not found");
     }
+    res.status(201).json(newContact);
   } catch (error) {
     next(error);
   }
@@ -77,7 +74,6 @@ export const createContact = async (req, res, next) => {
 
 export const updateContact = async (req, res, next) => {
   try {
-    // треба робити checkID ***************
     const { id } = req.params;
     const contactToUpdate = await updateContactbyId(id, req.body);
     res.status(200).json(contactToUpdate);
