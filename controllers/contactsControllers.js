@@ -12,11 +12,7 @@ const {
 export const getAllContacts = async (req, res) => {
   try {
     const contacts = await listContacts();
-    res.json({
-      status: "success",
-      code: 200,
-      contacts,
-    });
+    res.status().json(contacts);
   } catch (error) {
     res.status(500).json({ status: "error", message: error.message });
   }
@@ -28,11 +24,7 @@ export const getOneContact = async (req, res, next) => {
     const oneContact = await getContactById(id);
 
     if (oneContact) {
-      res.json({
-        status: "success",
-        code: 200,
-        oneContact,
-      });
+      res.status(200).json(oneContact);
     } else {
       throw HttpError(404, "Not found");
     }
@@ -49,11 +41,7 @@ export const deleteContact = async (req, res, next) => {
     if (!deletedContact) {
       throw HttpError(404, "Not found");
     }
-    res.status(200).json({
-      status: "success",
-      message: "Contact deleted",
-      deletedContact,
-    });
+    res.status(200).json(deletedContact);
   } catch (error) {
     next(error);
   }
@@ -75,7 +63,14 @@ export const createContact = async (req, res, next) => {
 export const updateContact = async (req, res, next) => {
   try {
     const { id } = req.params;
+    if (Object.keys(req.body).length === 0) {
+      throw HttpError(400, "Body must have at least one field");
+    }
+
     const contactToUpdate = await updateContactbyId(id, req.body);
+    if (!contactToUpdate) {
+      throw HttpError(404, "Not found");
+    }
     res.status(200).json(contactToUpdate);
   } catch (error) {
     next(error);
