@@ -12,7 +12,7 @@ const {
 export const getAllContacts = async (req, res) => {
   try {
     const contacts = await listContacts();
-    res.status().json(contacts);
+    res.status(200).json(contacts);
   } catch (error) {
     res.status(500).json({ status: "error", message: error.message });
   }
