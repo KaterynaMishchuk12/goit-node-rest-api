@@ -3,6 +3,7 @@ import validateBody from "../helpers/validateBody.js";
 import {
   createContactSchema,
   updateContactSchema,
+  updateFavoriteStatusSchema,
 } from "../schemas/contactsSchemas.js";
 import {
   createContact,
@@ -25,6 +26,10 @@ contactsRouter.post("/", validateBody(createContactSchema), createContact);
 
 contactsRouter.put("/:id", validateBody(updateContactSchema), updateContact);
 
-contactsRouter.patch("/:id/favorite", updateStatusContact);
+contactsRouter.patch(
+  "/:id/favorite",
+  validateBody(updateFavoriteStatusSchema),
+  updateStatusContact
+);
 
 export default contactsRouter;
