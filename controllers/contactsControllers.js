@@ -1,4 +1,4 @@
-import Types from "mongoose";
+import { Types } from "mongoose";
 import HttpError from "../helpers/HttpError.js";
 import contactsServices from "../services/contactsServices.js";
 
@@ -8,6 +8,7 @@ const {
   removeContact,
   addContact,
   updateContactbyId,
+  updateFavoriteStatus,
 } = contactsServices;
 
 export const getAllContacts = async (req, res) => {
@@ -23,8 +24,8 @@ export const getOneContact = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    // const isValidId = Types.ObjectId.isValid(id);  не хоче працювати
-    // if (!isValidId) throw HttpError(404, "Not found");
+    const isValidId = Types.ObjectId.isValid(id);
+    if (!isValidId) throw HttpError(404, "Not found");
 
     const oneContact = await getContactById(id);
 
@@ -79,5 +80,15 @@ export const updateContact = async (req, res, next) => {
 };
 
 export const updateStatusContact = async (req, res, next) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
+    const { favorite } = req.body;
+
+    const withUpdatedStatus = await updateFavoriteStatus(id, favorite);
+    if (!withUpdatedStatus) throw HttpError(404, "Not found");
+
+    res.status(200).json(withUpdatedStatus);
+  } catch (error) {
+    next(error);
+  }
 };
