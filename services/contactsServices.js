@@ -1,15 +1,9 @@
-import { promises as fs } from "fs";
-import path from "path";
-import { v4 } from "uuid";
-
-const contactsPath = path.resolve("./db", "contacts.json");
+import { Contact } from "../models/contactModel.js";
 
 async function listContacts() {
   try {
-    const readJsonResult = await fs.readFile(contactsPath);
-    const arrayOfContacts = JSON.parse(readJsonResult);
-
-    return arrayOfContacts;
+    const contacts = await Contact.find();
+    return contacts;
   } catch (error) {
     console.log(error);
   }
@@ -17,8 +11,8 @@ async function listContacts() {
 
 async function getContactById(contactId) {
   try {
-    const contacts = await listContacts();
-    return contacts.find((contact) => contact.id === contactId) || null;
+    const contact = await Contact.findById(contactId);
+    return contact;
   } catch (error) {
     console.log(error);
   }
@@ -26,45 +20,39 @@ async function getContactById(contactId) {
 
 async function removeContact(contactId) {
   try {
-    const contacts = await listContacts();
-    const contactIndex = contacts.findIndex(
-      (contact) => contact.id === contactId
-    );
-
-    if (contactIndex !== -1) {
-      const contactToRemove = contacts.splice(contactIndex, 1)[0];
-
-      await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-
-      return contactToRemove || null;
-    }
+    const contactToRemomve = await Contact.findByIdAndDelete(contactId);
+    return contactToRemomve;
   } catch (error) {
     console.log(error.message);
   }
 }
 
-async function addContact(name, email, phone) {
+async function addContact(data) {
   try {
-    const contacts = await listContacts();
-    const newContactId = v4();
-    const newContact = { id: newContactId, name, email, phone };
-    contacts.push(newContact);
-    await fs.writeFile(contactsPath, JSON.stringify(contacts));
+    const newContact = await Contact.create(data);
+
     return newContact;
   } catch (error) {}
 }
 
 async function updateContactbyId(id, data) {
   try {
-    const contacts = await listContacts();
-    const contactToUpdate = contacts.findIndex((contact) => contact.id === id);
-    if (contactToUpdate === -1) {
-      return null;
-    }
-    contacts[contactToUpdate] = { ...contacts[contactToUpdate], ...data };
-    await fs.writeFile(contactsPath, JSON.stringify(contacts));
+    const contactToUpdate = await Contact.findByIdAndUpdate(id, data, {
+      new: true,
+    });
+    return contactToUpdate;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
-    return contacts[contactToUpdate];
+async function updateFavoriteStatus(contactId, data) {
+  try {
+    const status = { favorite: data };
+    const statusToUpdate = await Contact.findByIdAndUpdate(contactId, status, {
+      new: true,
+    });
+    return statusToUpdate;
   } catch (error) {
     console.log(error);
   }
@@ -76,4 +64,5 @@ export default {
   removeContact,
   addContact,
   updateContactbyId,
+  updateFavoriteStatus,
 };
