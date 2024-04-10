@@ -7,6 +7,6 @@ import { registerUser, login } from "../controllers/auth.js";
 const authRouter = express.Router();
 
 authRouter.post("/register", validateBody(registerUserSchema), registerUser);
-authRouter.post("/login", login);
+authRouter.post("/login", validateBody(registerUserSchema), login);
 
 export default authRouter;

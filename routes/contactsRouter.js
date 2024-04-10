@@ -13,10 +13,11 @@ import {
   updateContact,
   updateStatusContact,
 } from "../controllers/contactsControllers.js";
+import authenticate from "../helpers/authenticate.js";
 
 const contactsRouter = express.Router();
 
-contactsRouter.get("/", getAllContacts);
+contactsRouter.get("/", authenticate, getAllContacts);
 
 contactsRouter.get("/:id", getOneContact);
 
