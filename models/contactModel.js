@@ -1,3 +1,4 @@
+// contactModel.js
 import { model, Schema } from "mongoose";
 
 const contactSchema = new Schema(
@@ -15,6 +16,7 @@ const contactSchema = new Schema(
     owner: {
       type: Schema.Types.ObjectId,
       ref: "user",
+      required: true,
     },
   },
   { versionKey: false }

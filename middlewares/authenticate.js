@@ -1,6 +1,8 @@
+// authenticate.js middleware
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import HttpError from "./HttpError.js";
+
+import HttpError from "../helpers/HttpError.js";
 import { User } from "../models/userModel.js";
 
 dotenv.config();
@@ -16,8 +18,10 @@ const authenticate = async (req, res, next) => {
   try {
     const { id } = jwt.verify(token, secretKey);
     const user = await User.findById(id);
-    if (!user) throw HttpError(401, "Not authorized");
+    if (!user || !user.token || user.token !== token)
+      throw HttpError(401, "Not authorized");
 
+    req.user = user;
     next();
   } catch (error) {
     next(error);

@@ -13,7 +13,10 @@ const {
 
 export const getAllContacts = async (req, res) => {
   try {
-    const contacts = await listContacts();
+    const { _id: owner } = req.user;
+    const { page = 1, limit = 20 } = req.query;
+    const skip = (page - 1) * limit;
+    const contacts = await listContacts({ owner }, { skip, limit });
     res.status(200).json(contacts);
   } catch (error) {
     res.status(500).json({ status: "error", message: error.message });
@@ -52,8 +55,9 @@ export const deleteContact = async (req, res, next) => {
 
 export const createContact = async (req, res, next) => {
   try {
+    const { _id: owner } = req.user;
     const { name, email, phone } = req.body;
-    const newContact = await addContact({ name, email, phone });
+    const newContact = await addContact({ name, email, phone, owner });
     if (!newContact) {
       throw HttpError(404, "Not found");
     }
