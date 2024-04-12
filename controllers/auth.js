@@ -1,4 +1,3 @@
-// authController.js
 import HttpError from "../helpers/HttpError.js";
 import { User } from "../models/userModel.js";
 
@@ -51,8 +50,8 @@ export const login = async (req, res, next) => {
 };
 
 export const getCurrent = async (req, res) => {
-  const { email } = req.user;
-  res.json(email);
+  const { email, subscription } = req.user;
+  res.status(200).json({ email, subscription });
 };
 
 export const logout = async (req, res) => {
