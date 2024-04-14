@@ -9,18 +9,18 @@ async function listContacts({ owner }) {
   }
 }
 
-async function getContactById(contactId) {
+async function getContactById({ _id, owner }) {
   try {
-    const contact = await Contact.findById(contactId);
+    const contact = await Contact.findById({ _id, owner });
     return contact;
   } catch (error) {
     console.log(error);
   }
 }
 
-async function removeContact(contactId) {
+async function removeContact({ _id, owner }) {
   try {
-    const contactToRemomve = await Contact.findByIdAndDelete(contactId);
+    const contactToRemomve = await Contact.findByIdAndDelete({ _id, owner });
     return contactToRemomve;
   } catch (error) {
     console.log(error.message);

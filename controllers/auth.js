@@ -20,6 +20,7 @@ export const registerUser = async (req, res, next) => {
 
     res.status(201).json({
       email: newUser.email,
+      subscribtion: newUser.subscription,
     });
   } catch (error) {
     next(error);
@@ -42,7 +43,7 @@ export const login = async (req, res, next) => {
     await User.findByIdAndUpdate(user._id, { token });
     res.status(200).json({
       token,
-      user: { email, subscription },
+      user: { email, subscription: user.subscription },
     });
   } catch (error) {
     next(error);
