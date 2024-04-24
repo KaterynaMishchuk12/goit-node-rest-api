@@ -7,8 +7,6 @@ import mongoose from "mongoose";
 import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/authRouter.js";
 
-dotenv.config();
-
 const app = express();
 
 mongoose
