@@ -58,7 +58,7 @@ export const verifyEmail = async (req, res, next) => {
   try {
     const { verificationToken } = req.params;
     const user = await User.findOne({ verificationToken });
-    if (!user) throw HttpError(404, "Not found");
+    if (!user) throw HttpError(404, "User not found");
 
     await User.findByIdAndUpdate(user._id, {
       verify: true,
@@ -74,6 +74,8 @@ export const verifyEmail = async (req, res, next) => {
 export const resendVerifyEmail = async (req, res, next) => {
   try {
     const { email } = req.body;
+    if (!email) throw HttpError(400, "Missing required field email");
+
     const user = await User.findOne({ email });
 
     if (!user) throw HttpError(401, "Not found");
